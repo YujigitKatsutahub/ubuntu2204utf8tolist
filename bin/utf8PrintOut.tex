@@ -1,0 +1,33 @@
+% utf8tolist's TeX_file Ver 1.22  2023.04.16 edit by Y.Katsuta
+%
+% utf8 の漢字　髙﨑  
+%
+\documentclass[a4paper,10pt,draft]{ujreport}
+\usepackage{moreverb}
+\usepackage{fancyheadings}
+
+\topmargin -0.6in
+\headheight 0.3in
+\headsep 0.3in
+\marginparsep 0in
+\footskip 0.3in
+\marginparwidth 0in
+\marginparsep -1in
+\oddsidemargin 0in
+\evensidemargin 0in
+
+\input{PrintOutSize.txt}
+
+\pagestyle{fancyplain}
+
+\begin{document}
+\def\baselinestretch{0.9}\normalsize
+%
+\printdate
+\chead{}
+\lhead{\input{GetFileName.dat}} 
+\cfoot{}
+\listinginput{1}{PrintOutText.txt}
+
+\end{document}
+

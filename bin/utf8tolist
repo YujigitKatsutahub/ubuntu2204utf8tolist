@@ -1,0 +1,328 @@
+#!/bin/sh
+#
+# utf8tolist Ver 1.3.1  2023.04.22 edit  by Yuji Katsuta
+#  
+# utf8 の漢字　髙﨑  
+#  
+OTOLISTEV="/usr/bin/evince"
+OTOLISTNKF="/usr/bin/nkf -w"
+OTOLISTTEX="/usr/bin/uplatex"
+OTOLISTDVI="/usr/bin/dvipdfmx"
+OTOLISTLS="/bin/ls -l --time-style=iso"
+OTOLISTAWK="/usr/bin/awk"
+OTOLISTRM="/bin/rm"
+OTOLISTCP="/bin/cp"
+OTOLISTMV="/bin/mv"
+OTOLISTEX="/usr/bin/expand"
+#
+EVTOOL="${TOLISTEV=$OTOLISTEV}"
+if [ "$TOLISTEV" != "$OTOLISTEV" ]
+then
+ echo "evince COMMAND = $TOLISTEV"
+fi
+NKFTOOL="${TOLISTNKF=$OTOLISTNKF}"
+if [ "$TOLISTNKF" != "$OTOLISTNKF" ]
+then
+ echo "nkf COMMAND = $TOLISTNKF"
+fi
+PLATEXTOOL="${TOLISTTEX=$OTOLISTTEX}"
+
+if [ "$TOLISTTEX" != "$OTOLISTTEX" ]
+then
+ echo "LaTeX COMMAND = $TOLISTTEX"
+fi
+DVIPDFTOOL="${TOLISTDVI=$OTOLISTDVI}"
+if [ "$TOLISTDVI" != "$OTOLISTDVI" ]
+then
+ echo "dvipdfmx COMMAND = $TOLISTDVI"
+fi
+LSTOOL="${TOLISTLS=$OTOLISTLS}"
+if [ "$TOLISTLS" != "$OTOLISTLS" ]
+then
+ echo "ls COMMAND = $TOLISTLS"
+fi
+AWKTOOL="${TOLISTAWK=$OTOLISTAWK}"
+if [ "$TOLISTAWK" != "$OTOLISTAWK" ]
+then
+ echo "awk COMMAND = $TOLISTAWK"
+fi
+RMTOOL="${TOLISTRM=$OTOLISTRM}"
+if [ "$TOLISTRM" != "$OTOLISTRM" ]
+then
+ echo "rm COMMAND = $TOLISTRM"
+fi
+CPTOOL="${TOLISTCP=$OTOLISTCP}"
+if [ "$TOLISTCP" != "$OTOLISTCP" ]
+then
+ echo "cp COMMAND = $TOLISTCP"
+fi
+MVTOOL="${TOLISTMV=$OTOLISTMV}"
+if [ "$TOLISTMV" != "$OTOLISTMV" ]
+then
+ echo "mv COMMAND = $TOLISTMV"
+fi
+EXTOOL="${TOLISTEX=$OTOLISTEX}"
+if [ "$TOLISTEX" != "$OTOLISTEX" ]
+then
+ echo "expand COMMAND = $TOLISTEX"
+fi
+#
+CMD="$EVTOOL"
+EV=""
+NOLIST=""
+SIZE="a4"
+WADATE=""
+ORGDIR="`pwd`"
+OWN="`basename $0`"
+TABNO="2"
+#
+if [ -r ~/GetFileName.dat ]
+then
+ $RMTOOL ~/GetFileName.dat
+fi
+#
+LOOPFLAG=0
+#
+while [ $LOOPFLAG -eq 0 ]
+do
+ if [ "$1" = "" -o "$1" = "-help" -o "$1" = "-h" ]
+ then
+  echo "****************************************************************"
+  echo "             Text file Printout Command" 
+  echo "" 
+  echo "%$OWN filename1 filename2 ...     A4 list PDF to evince"
+  echo "%$OWN -nolist -print filename1 filename2 ... text print"
+  echo "%$OWN -a4l filename1 filename2 ...        A4 Landscape PDF"
+  echo "%$0 -a3lf filename       A3L full size PDF"
+  echo " option : -h -help      help"
+  echo "        : -list -nolist [[numbering]] or [not]     [[ ]]:default"
+  echo "        : -print -evince -pdf [[print]] or [evince] or [PDF]"
+  echo "        : -a4 -a4r -a4f [[a4]] or [a4 right full] or [a4 full]"
+  echo "        : -a4l -a4lr -a4lb [a4l] or [a4l right full] or [a4l botom full]"
+  echo "        : -a4lf -a4lfr  [a4l full] or [a4l full right]"
+  echo "        : -a3 -a3r -a3f -a3l -a3lr -a3lf"
+  echo "        : -t1 -t2 ... -t16 [t2] tab NO. 2"
+  if [ "$1" = "" ]
+  then
+    echo "****************************************************************"
+    LOOPFLAG=2
+    continue
+  fi    
+  echo '  _____________    _____________    _____________  '
+  echo ' |             |  |             |  |    ________ | '
+  echo ' |    ______   |  |    ________ |  |   |        || '
+  echo ' |   |      |  |  |   |        ||  |   |        || '
+  echo ' |   |      |  |  |   |        ||  |   |        || '
+  echo ' |   |  a4  |  |  |   |  a4r   ||  |   |  a4f   || '
+  echo ' |   |      |  |  |   |        ||  |   |        || '
+  echo ' |   |      |  |  |   |        ||  |   |        || '
+  echo ' |    ~~~~~~   |  |    ~~~~~~~~ |  |   |        || '
+  echo ' |             |  |             |  |    ~~~~~~~~ | '
+  echo '  ~~~~~~~~~~~~~    ~~~~~~~~~~~~~    ~~~~~~~~~~~~~  '
+  echo '  __________________    __________________    __________________  '
+  echo ' |                  |  |                  |  |                  | '
+  echo ' |    __________    |  |    _____________ |  |    __________    | '
+  echo ' |   |          |   |  |   |             ||  |   |          |   | '
+  echo ' |   |    a4l   |   |  |   |    a4lr     ||  |   |    a4lb  |   | '
+  echo ' |   |          |   |  |   |             ||  |   |          |   | '
+  echo ' |    ~~~~~~~~~~    |  |    ~~~~~~~~~~~~~ |  |   |          |   | '
+  echo ' |                  |  |                  |  |    ~~~~~~~~~~    | '
+  echo '  ~~~~~~~~~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~  '
+  echo '  __________________    __________________  '
+  echo ' |                  |  |    _____________ | '
+  echo ' | ________________ |  |   |             || '
+  echo ' ||                ||  |   |             || '
+  echo ' ||       a4lf     ||  |   |    a4lfr    || '
+  echo ' ||                ||  |   |             || '
+  echo ' ||                ||  |   |             || '
+  echo ' | ~~~~~~~~~~~~~~~~ |  |    ~~~~~~~~~~~~~ | '
+  echo '  ~~~~~~~~~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~  '
+  echo '  _____________    _____________    _____________  '
+  echo ' |             |  |             |  |             | '
+  echo ' |    ______   |  |    ______   |  | ___________ | '
+  echo ' |   |      |  |  |   |      |  |  ||           || '
+  echo ' |   |      |  |  |   |      |  |  ||           || '
+  echo ' |   |  a3  |  |  |   |  a3r |  |  ||    a3f    || '
+  echo ' |   |      |  |  |   |      |  |  ||           || '
+  echo ' |   |      |  |  |   |      |  |  ||           || '
+  echo ' |    ~~~~~~   |  |   |      |  |  ||           || '
+  echo ' |             |  |    ~~~~~~   |  | ~~~~~~~~~~~ | '
+  echo '  ~~~~~~~~~~~~~    ~~~~~~~~~~~~~    ~~~~~~~~~~~~~  '
+  echo '  __________________    __________________    __________________  '
+  echo ' |                  |  |                  |  |    _____________ | '
+  echo ' |    __________    |  |    _____________ |  |   |             || '
+  echo ' |   |          |   |  |   |             ||  |   |             || '
+  echo ' |   |    a3l   |   |  |   |    a3lr     ||  |   |    a3lf     || '
+  echo ' |   |          |   |  |   |             ||  |   |             || '
+  echo ' |    ~~~~~~~~~~    |  |    ~~~~~~~~~~~~~ |  |   |             || '
+  echo ' |                  |  |                  |  |    ~~~~~~~~~~~~~ | '
+  echo '  ~~~~~~~~~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~  '
+  echo '****************************************************************'
+  LOOPFLAG=2
+  continue
+ fi
+ case $1 in
+  -list)         NOLIST="";;
+  -nolist)       NOLIST="nolist";;
+  -evince)       EV="EV";;
+  -a4)           SIZE="a4";;
+  -a4r)          SIZE="a4r";;
+  -a4f)          SIZE="a4f";;
+  -a4l)          SIZE="a4l";;
+  -a4lr)         SIZE="a4lr";;
+  -a4lb)         SIZE="a4lb";;
+  -a4lf)         SIZE="a4lf";;
+  -a4lfr)        SIZE="a4lfr";;
+  -a3)           SIZE="a3";;
+  -a3r)          SIZE="a3r";;
+  -a3f)          SIZE="a3f";;
+  -a3l)          SIZE="a3l";;
+  -a3lr)         SIZE="a3lr";;
+  -a3lf)         SIZE="a3lf";;
+  -t1)           TABNO="1"; echo "tab NO. = $TABNO";;
+  -t2)           TABNO="2"; echo "tab NO. = $TABNO";;
+  -t3)           TABNO="3"; echo "tab NO. = $TABNO";;
+  -t4)           TABNO="4"; echo "tab NO. = $TABNO";;
+  -t5)           TABNO="5"; echo "tab NO. = $TABNO";;
+  -t6)           TABNO="6"; echo "tab NO. = $TABNO";;
+  -t7)           TABNO="7"; echo "tab NO. = $TABNO";;
+  -t8)           TABNO="8"; echo "tab NO. = $TABNO";;
+  -t9)           TABNO="9"; echo "tab NO. = $TABNO";;
+  -t10)          TABNO="10";echo "tab NO. = $TABNO";;
+  -t11)          TABNO="11";echo "tab NO. = $TABNO";;
+  -t12)          TABNO="12";echo "tab NO. = $TABNO";;
+  -t13)          TABNO="13";echo "tab NO. = $TABNO";;
+  -t14)          TABNO="14";echo "tab NO. = $TABNO";;
+  -t15)          TABNO="15";echo "tab NO. = $TABNO";;
+  -t16)          TABNO="16";echo "tab NO. = $TABNO";;
+  -*)            echo "  *****    [ $1 ]  illegal option!!   *****"; LOOPFLAG=2;;
+  *)             LOOPFLAG=1; continue;;
+ esac
+ shift
+done
+#
+while [ $LOOPFLAG -eq 1 ]
+do
+ if [ ! -r $1 ]
+ then
+  echo " *****"
+  echo " ***** $1 not found !! *****"
+  echo " *****"
+  shift
+  if [ "$1" = "" ]
+  then
+   LOOPFLAG=2
+  fi
+  continue
+ fi
+ FILENAMEB="`basename $1`"
+ $EXTOOL -t $TABNO $1 | $NKFTOOL > ~/PrintOutText.txt
+ if [ $? -ne 0 ]
+ then
+  LOOPFLAG=3
+  continue
+ fi
+ $CPTOOL -p ~/bin/utf8PrintOut.tex ~/PrintOutDefault.tex
+ if [ $? -ne 0 ]
+ then
+  LOOPFLAG=3
+  continue
+ fi
+ cd $ORGDIR
+ $LSTOOL $1 > ~/GetFileName.tmp
+ cd ~/
+ if [ $? -ne 0 ]
+ then
+  LOOPFLAG=3
+  continue
+ fi
+ $AWKTOOL '{printf("(%s ",$6)}' ~/GetFileName.tmp > ~/GetFileName.dat
+ echo "$FILENAMEB)" |/bin/sed "s/_/,/g" >> ~/GetFileName.dat
+ if [ $? -ne 0 ]
+ then
+  LOOPFLAG=3
+  continue
+ fi
+ $RMTOOL ~/GetFileName.tmp
+ cd ~/
+ echo '\def\printdate{\\rhead{(printdate : \\number\year.\\number\month.\\number\day)\hspace{1zw}\\thepage}}' > PrintOutSize.txt
+ if [ "$NOLIST" = "nolist" ]
+ then
+  echo '\def\\verbprint{\\verbatimfile}' >> PrintOutSize.txt
+ else
+  echo '\def\\verbprint{\\verbatimlisting}' >> PrintOutSize.txt
+ fi
+ case $SIZE in
+  a4)      echo '\\textheight 237mm \\textwidth 160mm' >> PrintOutSize.txt;;
+  a4r)     echo '\\textheight 237mm \\textwidth 180mm' >> PrintOutSize.txt;;
+  a4f)     echo '\\textheight 270mm \\textwidth 180mm' >> PrintOutSize.txt;;
+  a4l)     echo '\\textheight 150mm \\textwidth 245mm' >> PrintOutSize.txt;;
+  a4lr)    echo '\\textheight 150mm \\textwidth 265mm' >> PrintOutSize.txt;;
+  a4lb)    echo '\\textheight 170mm \\textwidth 245mm' >> PrintOutSize.txt;;
+  a4lf)    echo '\\textheight 170mm \\textwidth 285mm' >> PrintOutSize.txt;;
+  a4lfr)   echo '\\textheight 190mm \\textwidth 265mm' >> PrintOutSize.txt;;
+  a3)      echo '\\textheight 358mm \\textwidth 243mm' >> PrintOutSize.txt;;
+  a3r)     echo '\\textheight 378mm \\textwidth 243mm' >> PrintOutSize.txt;;
+  a3f)     echo '\\textheight 378mm \\textwidth 283mm' >> PrintOutSize.txt;;
+  a3l)     echo '\\textheight 237mm \\textwidth 368mm' >> PrintOutSize.txt;;
+  a3lr)    echo '\\textheight 237mm \\textwidth 388mm' >> PrintOutSize.txt;;
+  a3lf)    echo '\\textheight 277mm \\textwidth 388mm' >> PrintOutSize.txt;;
+ esac
+ $PLATEXTOOL PrintOutDefault.tex
+ if [ $? -ne 0 ]
+ then
+  LOOPFLAG=3
+  continue
+ fi
+ $RMTOOL PrintOutText.txt PrintOutDefault.tex PrintOutSize.txt
+ $RMTOOL GetFileName.dat
+#
+ case $SIZE in
+  a4)      $DVIPDFTOOL -p a4    -x 2.45cm -y 3.65cm PrintOutDefault.dvi;;
+  a4r)     $DVIPDFTOOL -p a4    -x 2.45cm -y 3.65cm PrintOutDefault.dvi;;
+  a4f)     $DVIPDFTOOL -p a4    -x 2.45cm -y 1.95cm PrintOutDefault.dvi;;
+  a4l)     $DVIPDFTOOL -p a4 -l -x 2.45cm -y 3.45cm PrintOutDefault.dvi;;
+  a4lr)    $DVIPDFTOOL -p a4 -l -x 2.45cm -y 3.45cm PrintOutDefault.dvi;;
+  a4lb)    $DVIPDFTOOL -p a4 -l -x 2.45cm -y 3.45cm PrintOutDefault.dvi;;
+  a4lf)    $DVIPDFTOOL -p a4 -l -x 0.55cm -y 3.45cm PrintOutDefault.dvi;;
+  a4lfr)   $DVIPDFTOOL -p a4 -l -x 2.45cm -y 1.65cm PrintOutDefault.dvi;;
+  a3)      $DVIPDFTOOL -p a3    -x 2.45cm -y 3.45cm PrintOutDefault.dvi;;
+  a3r)     $DVIPDFTOOL -p a3    -x 2.45cm -y 3.45cm PrintOutDefault.dvi;;
+  a3f)     $DVIPDFTOOL -p a3    -x 0.65cm -y 3.45cm PrintOutDefault.dvi;;
+  a3l)     $DVIPDFTOOL -p a3 -l -x 2.45cm -y 3.45cm PrintOutDefault.dvi;;
+  a3lr)    $DVIPDFTOOL -p a3 -l -x 2.45cm -y 3.45cm PrintOutDefault.dvi;;
+  a3lf)    $DVIPDFTOOL -p a3 -l -x 2.45cm -y 1.65cm PrintOutDefault.dvi;;
+ esac
+ if [ $? -ne 0 ]
+ then
+  LOOPFLAG=3
+  continue
+ fi
+#
+ cd $ORGDIR
+ $MVTOOL ~/PrintOutDefault.pdf $1.pdf
+ if [ "$EV" = "EV" ]
+ then
+  $CMD $1.pdf
+ fi
+ cd ~/
+#
+ if [ $? -ne 0 ]
+ then
+  LOOPFLAG=3
+  continue
+ fi
+#
+ $RMTOOL PrintOutDefault.dvi PrintOutDefault.log PrintOutDefault.aux
+ cd $ORGDIR
+ shift
+ if [ "$1" = "" ]
+ then
+  LOOPFLAG=2
+ fi
+done
+#
+#
+#
+#end of file utf8tolist
+
