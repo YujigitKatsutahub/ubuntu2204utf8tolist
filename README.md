@@ -9,8 +9,13 @@ ubuntu22.04ja において、
 - nkf  
 - make  
 
-  
-$HOME/bin に bin/* をコピー  
-logout後に再login  
+> $HOME/bin に bin/* をコピー  
+> logout後に再login  
+
+もしくは、
+
+> PATHの通っている場所に bin/* をコピー
+
+後に、
 make で README.md.pdf ができる  
 
