@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# utf8tolist 2023.04.23 edit  by Yuji Katsuta
+# utf8tolist 2023.04.25 edit  by Yuji Katsuta
 #  
 # utf8 の漢字　髙﨑  
 #  
@@ -74,6 +74,7 @@ SIZE="a4"
 WADATE=""
 ORGDIR="`pwd`"
 OWN="`basename $0`"
+DIRNAME="`dirname $0`"
 TABNO="2"
 #
 if [ -r ~/GetFileName.dat ]
@@ -222,7 +223,7 @@ do
   LOOPFLAG=3
   continue
  fi
- $CPTOOL -p ~/bin/utf8PrintOut.tex ~/PrintOutDefault.tex
+ $CPTOOL -p $DIRNAME/utf8PrintOut.tex ~/PrintOutDefault.tex
  if [ $? -ne 0 ]
  then
   LOOPFLAG=3
