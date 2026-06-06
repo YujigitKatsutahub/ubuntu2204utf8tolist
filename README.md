@@ -1,4 +1,4 @@
-ubuntu22.04ja において、
+ubuntu22.04ja ubuntu24.04 ubuntu26.04 lubuntu26.04 において、
 文字コード utf8 のファイルを行番号付きの pdf にするツール utf8tolist
 
 インストールする必要のあるプログラム
@@ -19,19 +19,24 @@ ubuntu22.04ja において、
 後に、
 make で README.md.pdf ができる  
 
-ubuntu22.04ja のインストール直後の場合の手順を以下に示す
+ubuntu のインストール直後の場合の手順を以下に示す
 
 ubuntu2204utf8tolist-main.zipをダウンロードし、展開
 
 ubuntu2204utf8tolist-mainで端末を開き、  
 
-sudo apt update  
-sudo apt -y upgrade  
-sudo apt -y install texlive texlive-lang-japanese texlive-latex-extra nkf make  
+sudo apt -U -y upgrade  
+sudo apt -y install nkf make evince  
+sudo apt -y install texlive texlive-lang-japanese texlive-latex-extra  
 rsync -av bin/ ~/bin/  
+
+なお、ubuntu22.04ja は、-U オプションが使えないので、
+最初の行が以下になります  
+sudo apt update && sudo apt -y upgrade  
 
 logout後、loginし、
 ubuntu2204utf8tolist-mainで端末を開き、  
 
 make  
 evince READEME.md.pdf
+
